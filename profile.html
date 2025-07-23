@@ -2,41 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Web Dev Tutorial</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="profile-container">
-            <header class="profile-header">
-                <h1 id="welcomeMessage">Welcome!</h1>
-                <button id="logoutBtn" class="logout-btn">Logout</button>
-            </header>
-
+            <div class="profile-header">
+                <h1>Welcome, <span id="profileUsername"></span></h1>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
             <div class="profile-content">
                 <div class="profile-image-container">
-                    <img id="profileImage" src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-image">
+                    <img class="profile-image" src="https://i.pravatar.cc/150?img=3" alt="Profile Picture">
                 </div>
-
                 <div class="profile-info">
-                    <h2>Profile Information</h2>
-                    <div class="info-item">
-                        <strong>Username:</strong> <span id="profileUsername">-</span>
-                    </div>
-                    <div class="info-item">
-                        <strong>Email:</strong> <span id="profileEmail">-</span>
-                    </div>
-                    <div class="info-item">
-                        <strong>Role:</strong> <span id="profileRole">-</span>
-                    </div>
-                    <div class="info-item">
-                        <strong>Last Login:</strong> <span id="lastLogin">-</span>
-                    </div>
+                    <h2>Your Info</h2>
+                    <div class="info-item"><strong>Email:</strong> <span id="profileEmail"></span></div>
+                    <div class="info-item"><strong>Role:</strong> <span id="profileRole"></span></div>
+                    <div class="info-item"><strong>Last Login:</strong> <span id="profileLastLogin"></span></div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="profile.js"></script>
 </body>
 </html>
