@@ -1,51 +1,65 @@
 // Check if user is already logged in
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
+    const rememberMe = localStorage.getItem('rememberMe');
+
+    if (isLoggedIn === 'true' && rememberMe === 'true') {
         window.location.href = 'profile.html';
     }
 });
 
 // Handle login form submission
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+document.getElementById('loginForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const username = document.getElementById('username').value;
+    const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
+    const remember = document.getElementById('rememberMe').checked;
     const errorMessage = document.getElementById('errorMessage');
+    const spinner = document.getElementById('spinner');
+    const loginBtn = document.getElementById('loginBtn');
 
-    // Clear previous error messages
     errorMessage.style.display = 'none';
     errorMessage.textContent = '';
 
-    // Validate inputs
+    // Detailed validation
     if (!username || !password) {
         showError('Please fill in all fields');
         return;
     }
 
-    // Check credentials (hardcoded for demo)
-    if (username === 'intern' && password === 'welcome123') {
-        // Successful login
-        const userData = {
-            username: username,
-            email: 'intern@company.com',
-            role: 'Web Development Intern',
-            lastLogin: new Date().toLocaleString()
-        };
-
-        // Save login state and user data
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userData', JSON.stringify(userData));
-
-        // Redirect to profile page
-        window.location.href = 'profile.html';
-    } else {
-        showError('Invalid username or password');
-
-        // Clear password field for security
-        document.getElementById('password').value = '';
+    if (password.length < 6) {
+        showError('Password must be at least 6 characters');
+        return;
     }
+
+    // Show loading spinner
+    spinner.style.display = 'block';
+    loginBtn.disabled = true;
+
+    setTimeout(() => {
+        // Fake delay to simulate processing
+        if (username === 'intern' && password === 'welcome123') {
+            const userData = {
+                username: username,
+                email: 'intern@company.com',
+                role: 'Web Development Intern',
+                lastLogin: new Date().toLocaleString()
+            };
+
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('rememberMe', remember ? 'true' : 'false');
+
+            window.location.href = 'profile.html';
+        } else {
+            showError('Invalid username or password');
+            document.getElementById('password').value = '';
+        }
+
+        spinner.style.display = 'none';
+        loginBtn.disabled = false;
+    }, 1000);
 });
 
 function showError(message) {
@@ -55,8 +69,15 @@ function showError(message) {
 }
 
 // Handle Enter key press
-document.addEventListener('keypress', function(event) {
+document.addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         document.getElementById('loginForm').dispatchEvent(new Event('submit'));
     }
+});
+
+// Toggle Password Visibility
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const passwordInput = document.getElementById('password');
+    const type = passwordInput.getAttribute('type');
+    passwordInput.setAttribute('type', type === 'password' ? 'text' : 'password');
 });
