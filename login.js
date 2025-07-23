@@ -1,83 +1,77 @@
 // Check if user is already logged in
-document.addEventListener('DOMContentLoaded', function () {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const rememberMe = localStorage.getItem('rememberMe');
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
+  const rememberMe = document.getElementById('rememberMe');
+  const spinner = document.getElementById('spinner');
+  const errorMessage = document.getElementById('errorMessage');
 
-    if (isLoggedIn === 'true' && rememberMe === 'true') {
-        window.location.href = 'profile.html';
-    }
-});
+  // Load saved email from localStorage if Remember Me was checked
+  const savedEmail = localStorage.getItem('rememberedEmail');
+  if (savedEmail) {
+    emailInput.value = savedEmail;
+    rememberMe.checked = true;
+  }
 
-// Handle login form submission
-document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+  // Toggle password visibility
+  togglePassword.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+  });
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const remember = document.getElementById('rememberMe').checked;
-    const errorMessage = document.getElementById('errorMessage');
-    const spinner = document.getElementById('spinner');
-    const loginBtn = document.getElementById('loginBtn');
+  // Form submit
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-    errorMessage.style.display = 'none';
+    // Reset error
     errorMessage.textContent = '';
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-    // Detailed validation
-    if (!username || !password) {
-        showError('Please fill in all fields');
-        return;
+    // Validate email format
+    if (!validateEmail(email)) {
+      errorMessage.textContent = 'Please enter a valid email.';
+      return;
     }
 
+    // Validate password length
     if (password.length < 6) {
-        showError('Password must be at least 6 characters');
-        return;
+      errorMessage.textContent = 'Password must be at least 6 characters.';
+      return;
     }
 
-    // Show loading spinner
-    spinner.style.display = 'block';
-    loginBtn.disabled = true;
+    // Show spinner
+    spinner.classList.remove('hidden');
 
+    // Simulate login process (2 seconds)
     setTimeout(() => {
-        // Fake delay to simulate processing
-        if (username === 'intern' && password === 'welcome123') {
-            const userData = {
-                username: username,
-                email: 'intern@company.com',
-                role: 'Web Development Intern',
-                lastLogin: new Date().toLocaleString()
-            };
+      spinner.classList.add('hidden');
 
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userData', JSON.stringify(userData));
-            localStorage.setItem('rememberMe', remember ? 'true' : 'false');
-
-            window.location.href = 'profile.html';
+      // Demo login check
+      if (email === 'intern@example.com' && password === 'welcome123') {
+        // Remember Me
+        if (rememberMe.checked) {
+          localStorage.setItem('rememberedEmail', email);
         } else {
-            showError('Invalid username or password');
-            document.getElementById('password').value = '';
+          localStorage.removeItem('rememberedEmail');
         }
 
-        spinner.style.display = 'none';
-        loginBtn.disabled = false;
-    }, 1000);
+        // Redirect to profile.html
+        window.location.href = 'profile.html';
+      } else {
+        errorMessage.textContent = 'Invalid email or password.';
+      }
+    }, 2000);
+  });
+
+  function validateEmail(email) {
+    // Simple regex for email format
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
 });
 
-function showError(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    errorMessage.textContent = message;
-    errorMessage.style.display = 'block';
-}
-
-// Handle Enter key press
-document.addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-    }
-});
-
-// Toggle Password Visibility
-document.getElementById('togglePassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
-    const type = passwordInput.getAttribute('type');
-    passwordInput.setAttribute('type', type === 'password' ? 'text' : 'password');
-});
